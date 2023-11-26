@@ -1,0 +1,27 @@
+- name: Get Switch Profile content
+  set_fact:
+    SwitchProfileContent: "{{ lookup('template','./j2/switch-template.xml.j2') }}"
+  tags: always
+
+- name: Debug Output for Switch Profile Request
+  debug: 
+    xmlstring: "{{ SwitchProfileContent }}"
+    pretty_print: yes
+  when: debug_switch == True
+  tags: always
+
+- name: Create Switch Profile
+  cisco.aci.aci_rest:
+    host: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    output_level: info
+    use_proxy: false
+    method: post
+    path: /api/node/mo/uni/infra.xml
+    content: "{{ SwitchProfileContent }}"
+  register: switch_results
+  delegate_to: localhost
+  tags: always

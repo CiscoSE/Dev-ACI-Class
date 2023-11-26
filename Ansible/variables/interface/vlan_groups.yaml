@@ -1,0 +1,59 @@
+---
+
+# Everything needed to create VLAN pools and associated physical domains go here. 
+vlan_groups:
+  - name: "StorageGroup"
+    alloc_mode: "static"
+    role: "external"
+    domains:
+      - name: "Storage"
+        type: "phys"
+    vlans:
+      - id_from: "10"
+        id_to: "10"
+        description: "Storage VLAN"
+      - id_from: "11"
+        id_to: "11"
+        description: "Storage VLAN 2"
+  - name: "ManagementGroup"
+    alloc_mode: "static"
+    role: "external"
+    vlans:
+      - id_from: "21"
+        id_to: "21"
+        description: "Management1"
+    domains:
+      - name: "Management1"
+        type: "phys"
+  - name: "WebGroup"
+    alloc_mode: "static"
+    role: "external"
+    vlans:
+      - id_from: "300"
+        id_to: "300"
+        description: "Web VLAN"
+    domains:
+      - name: "Web"
+        type: "phys"
+  - name: "AppGroup"
+    alloc_mode: "static"
+    role: "external"
+    vlans:
+      - id_from: "301"
+        id_to: "301"
+        description: "App VLAN"
+    domains:
+      - name: "App"
+        type: "phys"
+  - name: "DBGroup"
+    alloc_mode: "static"
+    role: "external"
+    vlans:
+      - id_from: "302"
+        id_to: "302"
+        description: "Database VLAN"
+    domains:
+      - name: "DB"
+        type: "phys"
+
+

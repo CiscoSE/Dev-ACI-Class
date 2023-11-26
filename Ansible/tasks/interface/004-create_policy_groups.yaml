@@ -1,0 +1,42 @@
+---
+
+- name: Debug Groups to Process
+  debug:
+    var: interface_policy_groups
+  when: debug_switch == True
+  tags: always
+
+
+- name: Create Policy Groups
+  set_fact:
+    policy_group_xml_content: "{{ lookup('template', './j2/policy-group-template.xml.j2') }}"
+  loop: "{{ interface_policy_groups }}"
+  loop_control:
+    loop_var: interface_policy_group
+  tags: always
+
+- name: Debug Output
+  debug:
+    msg: "{{ policy_group_xml_content }}"
+  when: debug_switch == True
+  tags: always
+  
+
+- name: Create Policy Group
+  cisco.aci.aci_rest:
+    host: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    output_level: info
+    use_proxy: false
+    method: post
+    path: /api/node/mo/uni/infra.xml
+    content: "{{ policy_group_xml_content }}"
+  loop: "{{ interface_policy_groups }}"
+  loop_control:
+    loop_var: interface_policy_group
+  register: policyGroup_results
+  delegate_to: localhost
+  tags: always

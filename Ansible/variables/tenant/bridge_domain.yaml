@@ -1,0 +1,16 @@
+bridge_domains:
+  - name: "Storage"
+    description: "Storage Support - VLAN 25"
+    vrf: "VRF2-E"
+    state: "present"
+    arp_flooding: true
+    l2_unknown_unicast: flood 
+    subnets:
+      - gateway: "192.168.10.1"
+        mask: "24"
+  - name: "App1-BD"
+    vrf: "VRF2-E"
+    state: "present"
+    subnets:
+      - gateway: "192.168.11.1"
+        mask: "24"

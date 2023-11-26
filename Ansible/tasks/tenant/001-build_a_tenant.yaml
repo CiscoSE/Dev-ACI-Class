@@ -1,0 +1,15 @@
+- name: "Create Tenant {{ tenant_name }}"
+  cisco.aci.aci_tenant:
+    use_proxy: no
+    use_ssl: yes
+    validate_certs: "no"
+    hostname: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    tenant: "{{ tenant_name }}"
+    state: "{{ tenant_state }}"
+  delegate_to: localhost
+  tags:
+  - tenant
+
+  # https://docs.ansible.com/ansible/latest/collections/cisco/aci/aci_tenant_module.html#ansible-collections-cisco-aci-aci-tenant-module

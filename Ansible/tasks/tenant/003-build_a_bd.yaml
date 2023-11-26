@@ -1,0 +1,31 @@
+- name: "Create  {{ bd.name}}"
+  cisco.aci.aci_bd:
+    use_proxy: no
+    use_ssl: yes
+    validate_certs: "no"
+    hostname: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    bd: "{{ bd.name }}"
+    # A tenant must be specified
+    tenant: "{{ tenant_name }}"
+    # VRF is case sensative and there is no validation of match
+    vrf: "{{ bd.vrf }}"
+    state: "{{ bd.state | default('present') }}"
+    arp_flooding: "{{ bd.arp_flooding | default(true) }}"
+    l2_unknown_unicast: "{{ bd.l2_unknown_unicast | default('flood') }}"
+  delegate_to: localhost
+  tags:
+    - bd
+
+# https://docs.ansible.com/ansible/latest/collections/cisco/aci/aci_bd_module.html
+
+- name: "Add Subnets to Bridge Domain: {{ bd.name }}"
+  include_tasks: ./tasks/tenant/003a-config_subnet.yaml
+  loop: "{{ bd.subnets }}"
+  loop_control:
+    loop_var: sub
+  when: bd.subnets is defined
+  tags:
+    - subnet
+

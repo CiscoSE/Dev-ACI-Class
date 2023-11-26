@@ -1,0 +1,21 @@
+- name: Create a subnet
+  cisco.aci.aci_bd_subnet:
+    use_proxy: no
+    use_ssl: yes
+    validate_certs: "no"
+    hostname: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    tenant: "{{ tenant_name }}"
+    bd: "{{ bd.name }}"
+    gateway: "{{ sub.gateway }}"
+    mask: "{{ sub.mask }}"
+    scope: "{{ sub.scope | default('public,shared') }}"
+    state: "{{ sub.state | default('present') }}"
+  delegate_to: localhost
+  tags:
+    - subnet
+
+# https://docs.ansible.com/ansible/latest/collections/cisco/aci/aci_bd_subnet_module.html
+
+

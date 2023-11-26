@@ -1,0 +1,23 @@
+---
+
+switches:
+  - id: "101"
+    blk_name: "101"
+    groups:
+    - name: "Web Server 1"
+      interface_policy_group: "AccessDemo"
+      interfaces:
+      - name: "Server1"
+        port: "5"
+        module: "1"
+        description: "Demo Server 1"
+  - id: "102"
+    blk_name: "L102"
+    groups:
+    - name: "Web Server 2"
+      interface_policy_group: "AccessDemo"
+      interfaces:
+      - name: "Server2"
+        port: "6"
+        module: "1"
+        description: "Demo Server 2"

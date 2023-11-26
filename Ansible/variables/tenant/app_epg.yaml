@@ -1,0 +1,52 @@
+application_profiles:
+  - name: "App1"
+    endpoint_groups:
+      - name: "Web1"
+        bd: "App1-BD" 
+        interfaces:
+          - interface_id: "1/5"
+            interface_mode: "trunk"
+            interface_type: "switch_port"
+            leafs: "101"
+            encap_id: "300" 
+          - interface_id: "1/6"
+            interface_mode: "trunk"
+            interface_type: "switch_port"
+            leafs: "102"
+            encap_id: "300" 
+        domains:
+          - domain_name: "Web"
+      - name: "App1"
+        bd: "App1-BD" 
+        interfaces:
+          - interface_id: "1/5"
+            interface_mode: "trunk"
+            interface_type: "switch_port"
+            leafs: "101"
+            encap_id: "301" 
+          - interface_id: "1/6"
+            interface_mode: "trunk"
+            interface_type: "switch_port"
+            leafs: "102"
+            encap_id: "301" 
+        domains:
+          - domain_name: "App"
+      - name: "DB1"
+        bd: "App1-BD"
+        interfaces:
+          - interface_id: "1/5"
+            interface_mode: "trunk"
+            interface_type: "switch_port"
+            leafs: "101"
+            encap_id: "302" 
+          - interface_id: "1/6"
+            interface_mode: "trunk"
+            interface_type: "switch_port"
+            leafs: "102"
+            encap_id: "302" 
+        domains:
+          - domain_name: "DB"
+  - name: "Storage"
+    endpoint_groups:
+      - name: "Storage"
+        bd: "Storage" 

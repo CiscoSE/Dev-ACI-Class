@@ -1,0 +1,4 @@
+<polUni>
+        <fvTenant dn="uni/tn-Test1" name="Test1" userdom=":all:"/>
+        <fvTenant dn="uni/tn-Test2" name="Test2" userdom=":all:"/>
+</polUni>

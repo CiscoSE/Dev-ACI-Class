@@ -1,0 +1,73 @@
+- name: "Create End Point Group {{ epg.name }}"
+  cisco.aci.aci_epg:
+    use_proxy: no
+    use_ssl: yes
+    validate_certs: "no"
+    hostname: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    tenant: "{{ tenant_name }}"
+    bd: "{{ epg.bd }}"
+    epg:  "{{ epg.name }}"
+    ap: "{{ ap.name }}"
+    intra_epg_isolation: "{{ epg.intra_epg_isolation | default('unenforced') }}"
+    preferred_group: "{{ epg.preferred_group | default('false') }}"
+    state: "{{ epg.state | default('present') }}"
+  delegate_to: localhost
+  tags:
+    - epg
+
+# https://docs.ansible.com/ansible/latest/collections/cisco/aci/aci_epg_module.html
+
+- name: "Assign Domains to {{ epg.name }}"
+  cisco.aci.aci_epg_to_domain:
+    use_proxy: no
+    use_ssl: yes
+    validate_certs: "no"
+    hostname: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    tenant: "{{ tenant_name }}"
+    epg:  "{{ epg.name }}"
+    ap: "{{ ap.name }}"
+    domain: "{{ domain.domain_name }}"
+    domain_type: "{{ domain.type | default('phys') }}"
+    state: present
+  delegate_to: localhost
+  when: epg.domains is defined
+  loop: "{{ epg.domains }}"
+  loop_control:
+    loop_var: domain
+  tags:
+    - domain
+
+# https://docs.ansible.com/ansible/latest/collections/cisco/aci/aci_epg_to_domain_module.html#ansible-collections-cisco-aci-aci-epg-to-domain-module
+
+- name: Add Interfaces for EPG
+  cisco.aci.aci_static_binding_to_epg:
+    use_proxy: no
+    use_ssl: yes
+    validate_certs: "no"
+    hostname: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    tenant: "{{ tenant_name }}"
+    epg:  "{{ epg.name }}"
+    ap: "{{ ap.name }}"
+    encap_id: "{{ interface.encap_id }}"
+    deploy_immediacy: "{{ interface.deploy_immediacy | default('immediate') }}"
+    interface_mode: "{{ interface.mode | default('trunk') }}"
+    interface_type: "{{ interface.type | default('switch_port') }}"
+    pod_id: "{{ interface.pod_id | default('1') }}"
+    leafs: "{{ interface.leafs }}"
+    interface: "{{ interface.interface_id }}"
+    state: "{{ interface.state | default('present') }}" 
+  delegate_to: localhost
+  loop: "{{ epg.interfaces }}"
+  loop_control:
+    loop_var: interface
+  when: epg.interfaces is defined
+  tags:
+    - interface
+
+# https://docs.ansible.com/ansible/latest/collections/cisco/aci/aci_static_binding_to_epg_module.html

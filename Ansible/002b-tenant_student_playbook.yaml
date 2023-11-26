@@ -1,0 +1,16 @@
+---
+
+- name: Tenant Creation Demo
+  hosts: all
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./variables/tenant/tenant.yaml
+
+  tasks:
+    
+    - name: "Build a Tenant"
+      include_tasks: ./tasks/tenant/001-build_a_tenant.yaml
+      tags:
+        - tenant
+

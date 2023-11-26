@@ -1,0 +1,33 @@
+---
+
+- name: Interface Configuration Demo
+  hosts: StudentSystem
+  gather_facts: no
+  vars_files:
+    - variables/interface/vlan_groups.yaml
+    - variables/interface/policy_groups.yaml
+    - variables/interface/switches.yaml
+    - variables/interface/aaep_dom.yaml
+  tasks:
+    
+  - name: Create VLAN Groups
+    include_tasks: ./tasks/interface/001-create_vlan_groups.yaml
+    loop: "{{ vlan_groups }}"
+    tags: vlans
+  
+  - name: Create Domains
+    include_tasks: ./tasks/interface/002-create_domains.yaml
+    loop: "{{ vlan_groups }}"
+    tags: domains
+
+  - name: Create AAEPs
+    include_tasks: ./tasks/interface/003-create_aaep.yaml
+    tags: aaep
+  
+  - name: Create Interface Policy Groups
+    include_tasks: ./tasks/interface/004-create_policy_groups.yaml
+    tags: interfacePolicyGroups
+
+  - name: Create Switch Profiles
+    include_tasks: ./tasks/interface/005-create_switch_profiles.yaml
+    tags: switchProfile

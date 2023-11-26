@@ -1,0 +1,16 @@
+infraInfra:
+    attributes:
+        dn: uni/infra
+    children:
+{% for aaep in aaep_list %}
+        - infraAttEntityP:
+            attributes:
+                name: {{ aaep.aaep_name }}
+                dn: uni/infra/attentp-{{ aaep.aaep_name }}
+            children:
+{% for domain_name in aaep.domains %}
+                - infraRsDomP:
+                    attributes:
+                        tDn: uni/phys-{{ domain_name }}
+{% endfor %}                        
+{% endfor %}

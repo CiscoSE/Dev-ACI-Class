@@ -1,0 +1,55 @@
+---
+
+- name: Debug item
+  debug:
+    msg: "{{ item }}"
+  when: debug_switch == True
+  tags: always
+
+
+
+- name: Debug Values in a loop
+  debug:
+    msg: "{{ item.name }} - {{ domain.name }}"
+  loop: "{{ item.domains }}"
+  loop_control:
+    loop_var: domain
+  when: item.domains is defined and (item.domains|length>0) and debug_switch == True
+  tags: always
+
+#- meta: end_play
+
+- name: Create Domain
+  cisco.aci.aci_rest:
+    host: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    output_level: info
+    method: post
+    path: /api/node/mo/uni/phys-{{ domain.name }}.json
+    content:
+      physDomP:
+        attributes:
+          name: "{{ domain.name }}"
+          dn: "uni/{{ domain.type | default('phys',true) }}-{{ domain.name }}"
+        children:
+          - infraRsVlanNs:
+              attributes:
+                tDn: "uni/infra/vlanns-[{{ item.name }}]-{{ item.alloc_mode | default('static',true) }}"
+                userdom: ":all:"
+  register: domain_results
+  delegate_to: localhost
+  loop: "{{ item.domains }}"
+  loop_control:
+    loop_var: domain
+  when: item.domains is defined and (item.domains|length>0)
+  tags: always
+
+- name: Debug Output
+  debug:
+    msg: "{{ domain_results }}"
+  when: domain_results is defined and debug_switch == True
+  tags: always
+

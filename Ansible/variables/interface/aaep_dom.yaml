@@ -1,0 +1,13 @@
+---
+
+# Everything needed to create VLAN pools, associated physical domains, and AAEPs goes here.
+aaep_list:
+  - aaep_name: "Demo-AEP"
+    domains:
+      - "Storage"
+      - "Management1"
+  - aaep_name: "Demo-AEP2"
+    domains:
+      - "Web"
+      - "App"
+      - "DB"

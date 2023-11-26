@@ -1,0 +1,57 @@
+---
+
+# This needs to receive only one group as item so we can verify the group exists and loop through the VLANs in it.
+
+- name: Create VLAN Pool
+  cisco.aci.aci_rest:
+    host: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    use_ssl: yes
+    validate_certs: no
+    method: post
+    path: /api/node/mo/uni/infra/vlanns-[{{ item.name }}]-{{ item.alloc_mode | default('static',true) }}.json
+    content:
+      fvnsVlanInstP:
+        attributes:
+          allocMode: "static"
+          dn: "uni/infra/vlanns-[{{ item.name }}]-{{ item.alloc_mode | default('static',true) }}"
+  register: vlan_results
+  delegate_to: localhost
+  tags: always
+
+
+- name: Debug Output
+  debug:
+    msg: "{{ vlan_results }}"
+  when: debug_switch == True
+  tags: always
+
+#- meta: end_play
+
+- name: Add VLANs to Pool
+  cisco.aci.aci_rest:
+    host: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    path: "/api/node/mo/uni/infra/vlanns-[{{ item.name  }}]-{{ item.alloc_mode }}/from-[vlan-{{ vlan.id_from}}]-to-[vlan-{{ vlan.id_to }}].json" 
+    method: post
+    content:
+      fvnsEncapBlk:
+        attributes:
+          allocMode: "{{ item.alloc_mode | default('static', true) }}"
+          descr: "{{ vlan.description }}"
+          dn: "uni/infra/vlanns-[{{ item.name  }}]-{{ item.alloc_mode }}/from-[vlan-{{ vlan.id_from}}]-to-[vlan-{{ vlan.id_to }}]"
+          from: "vlan-{{ vlan.id_from }}"
+          to: "vlan-{{ vlan.id_to }}"
+          #role: "{{ item.role}}"
+        children: []
+  when: item.vlans is defined
+  loop: "{{ item.vlans }}"
+  loop_control: 
+    loop_var: vlan
+  delegate_to: localhost
+  tags: always
+

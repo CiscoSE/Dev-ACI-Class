@@ -1,0 +1,10 @@
+---
+
+interface_policy_groups:
+  - name: "AccessDemo"
+    aaep_policy: "Demo-AEP2" # If this is wrong, it will just not work. No checking is done to validate this.
+    cdp_policy: "system-cdp-enabled"
+    link_level_policy: "system-link-level-10G-auto" 
+    lldp_policy: "system-lldp-enabled"
+
+    

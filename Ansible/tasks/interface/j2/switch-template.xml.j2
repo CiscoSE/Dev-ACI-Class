@@ -1,0 +1,38 @@
+<infraInfra>
+{% for switch in switches %}
+<infraAccPortP dn="uni/infra/accportprof-{{ switch.id }}" name="{{ switch.id }}">
+{% for group in switch.groups %}
+<infraHPortS name="{{ group.name }}" type="range">
+<infraRsAccBaseGrp fexId="{{ switch.id }}" tDn="uni/infra/funcprof/accportgrp-{{ group.interface_policy_group }}" />
+{% for interface in group.interfaces %}
+<infraPortBlk fromCard="{{interface.module}}" fromPort="{{ interface.port }}" name="{{ interface.name }}" toPort="{{ interface.port }}" toCard="{{ interface.module }}" descr="{{ interface.description }}" />
+{% endfor %}
+</infraHPortS>
+{% endfor %}
+</infraAccPortP>
+{% endfor %}
+
+{# 
+#####################################################################
+This section builds out the switch profile. We do it last because we 
+want to reference the Leaf Interface profile in this part of the 
+configuration
+#####################################################################
+#}
+{% for switch in switches %}
+<infraNodeP dn="uni/infra/nprof-{{ switch.id }}" name="{{ switch.id }}">
+    <infraRsAccPortP tDn="uni/infra/accportprof-{{ switch.id }}"/>
+    <infraLeafS name="{{ switch.id }}" type="range">
+{% if switch.blk_name %}
+{# When a switch has been created through the GUI, a hidden name is generated that can only be found by exporting the object through the GUI.
+If you assign that through the variables section, we can validate it as part of this process.  #}
+        <infraNodeBlk from_="{{ switch.id }}" to_="{{ switch.id }}" name="{{ switch.blk_name }}"/>
+{% else %}
+{# If we are creating this for the first time, we just use the switch ID as hidden name #}
+        <infraNodeBlk from_="{{ switch.id }}" to_="{{ switch.id }}" name="{{ switch.id }}"/>
+{% endif %}
+
+    </infraLeafS>
+</infraNodeP>
+{% endfor %}
+</infraInfra>

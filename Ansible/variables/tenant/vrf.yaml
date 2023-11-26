@@ -1,0 +1,7 @@
+vrf: 
+  - name: "VRF1-U"
+    state: "present"
+    policy_control: unenforced
+  - name: "VRF2-E"
+    state: "present"
+    policy_control: enforced

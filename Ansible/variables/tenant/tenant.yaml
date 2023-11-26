@@ -1,0 +1,2 @@
+tenant_name: Student_Tenant1
+tenant_state: "present"   # absent will remove

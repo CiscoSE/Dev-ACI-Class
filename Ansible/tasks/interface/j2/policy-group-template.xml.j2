@@ -1,0 +1,43 @@
+{# This template only applies to access port groups at this time.#}
+<infraInfra>
+<infraFuncP>
+<infraAccPortGrp name="{{ interface_policy_group.name  }}" dn="uni/infra/funcprof/accportgrp-{{ interface_policy_group.name }}">
+{% if interface_policy_group.aaep_policy %}
+<infraRsAttEntP annotation="" tDn="uni/infra/attentp-{{ interface_policy_group.aaep_policy }}" userdom=":all:"/>
+{% endif %}
+{% if interface_policy_group.cdp_policy %}
+<infraRsCdpIfPol tnCdpIfPolName="{{ interface_policy_group.cdp_policy }}"/>
+{% endif%}
+{% if interface_policy_group.lldp_policy %}
+<infraRsLldpIfPol tnLldpIfPolName="{{ interface_policy_group.lldp_policy }}"/>
+{% endif%}
+{% if interface_policy_group.link_level_policy %}
+<infraRsHIfPol tnFabricHIfPolName="{{ interface_policy_group.link_level_policy }}"/>
+{% endif %}
+
+{# 
+    These are here as place holders and represent all of the policies you could apply in a policy group for Access Ports.
+        <infraRsSynceEthIfPol annotation="" tnSynceEthIfPolName="" userdom="all"/>
+        <infraRsL2PortAuthPol annotation="" tnL2PortAuthPolName="" userdom="all"/>
+        <infraRsL2PortSecurityPol annotation="" tnL2PortSecurityPolName="" userdom="all"/>
+        <infraRsQosPfcIfPol annotation="" tnQosPfcIfPolName="" userdom="all"/>
+        <infraRsLinkFlapPol annotation="" tnFabricLinkFlapPolName="" userdom="all"/>
+        <infraRsDwdmIfPol annotation="" tnDwdmIfPolName="" userdom="all"/>
+        <infraRsFcIfPol annotation="" tnFcIfPolName="" userdom="all"/>
+        <infraRsCoppIfPol annotation="" tnCoppIfPolName="" userdom="all"/>
+        <infraRsQosDppIfPol annotation="" tnQosDppPolName="" userdom="all"/>
+        <infraRsMacsecIfPol annotation="" tnMacsecIfPolName="" userdom="all"/>
+        <infraRsMcpIfPol annotation="" tnMcpIfPolName="" userdom="all"/>
+        <infraRsMonIfInfraPol annotation="" tnMonInfraPolName="" userdom="all"/>
+        <infraRsQosEgressDppIfPol annotation="" tnQosDppPolName="" userdom="all"/>
+        <infraRsStormctrlIfPol annotation="" tnStormctrlIfPolName="" userdom="all"/>
+        <infraRsQosIngressDppIfPol annotation="" tnQosDppPolName="" userdom="all"/>
+        <infraRsL2IfPol annotation="" tnL2IfPolName="" userdom="all"/>
+        <infraRsQosSdIfPol annotation="" tnQosSdIfPolName="" userdom="all"/>
+        <infraRsQosLlfcIfPol annotation="" tnQosLlfcIfPolName="" userdom="all"/>
+        <infraRsStpIfPol annotation="" tnStpIfPolName="" userdom="all"/>
+#}
+</infraAccPortGrp>
+</infraFuncP>
+</infraInfra>
+

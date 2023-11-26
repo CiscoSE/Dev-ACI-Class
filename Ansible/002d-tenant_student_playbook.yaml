@@ -1,0 +1,32 @@
+---
+
+- name: Tenant / VRF / Bridge Domain Creation Demo
+  hosts: all
+  connection: local
+  gather_facts: no
+  vars_files:
+    - ./variables/tenant/tenant.yaml
+    - ./variables/tenant/vrf.yaml
+    - ./variables/tenant/bridge_domain.yaml
+
+  tasks:
+    
+    - name: "Build a Tenant"
+      include_tasks: ./tasks/tenant/001-build_a_tenant.yaml
+      tags:
+        - tenant
+    
+    - name: "Build VRFs"
+      include_tasks: ./tasks/tenant/002-build_a_vrf.yaml
+      loop: "{{ vrf }}"
+      tags:
+        - vrf
+
+    - name: "Build Bridge Domains"
+      include_tasks: ./tasks/tenant/003-build_a_bd.yaml
+      loop: "{{ bridge_domains }}"
+      loop_control:
+        loop_var: bd
+      tags:
+        - bd
+        - subnet

@@ -1,0 +1,26 @@
+- name: Create an Application Profile
+  cisco.aci.aci_ap:
+    use_proxy: no
+    use_ssl: yes
+    validate_certs: "no"
+    hostname: "{{ aci_host }}"
+    username: "{{ aci_user_name }}"
+    password: "{{ ansible_password }}"
+    tenant: "{{ tenant_name }}"
+    ap: "{{ ap.name }}"
+    state: "{{ ap.state | default('present') }}"
+  delegate_to: localhost
+  tags:
+    - ap
+
+# https://docs.ansible.com/ansible/latest/collections/cisco/aci/aci_ap_module.html
+
+#TODO Create EPGs. 
+- name: Create EPGs
+  include_tasks: ./005-build_a_epg.yaml
+  loop: "{{ ap.endpoint_groups }}"
+  loop_control:
+    loop_var: epg
+  when: ap.endpoint_groups is defined
+  tags:
+    - epg

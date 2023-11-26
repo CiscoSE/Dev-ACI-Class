@@ -1,0 +1,38 @@
+---
+
+- name: Tenent Query Demo
+  hosts: all
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - ./variables/tenant/tenant.yaml
+  
+  tasks:
+
+# Get the list of tenants
+  - name: Get Tenants (Changes nothing)
+    cisco.aci.aci_rest:
+      host: "{{ aci_host }}"
+      username: "{{ aci_user_name }}"
+      password: "{{ ansible_password }}"
+      validate_certs: no
+      use_ssl: yes
+      # Default method is GET, so we don't need to specify a method
+      # Path will return JSON data.
+      path: /api/class/uni/fvTenant.json
+    delegate_to: localhost
+    register: tenant_data
+  
+  # Loop through returned tenants and collect names 
+  - name: Create Tenant List from json
+    vars:
+      tenant_list: []
+    set_fact:
+      tenant_list: "{{ tenant_list + [ item.fvTenant.attributes.name ] }}"
+    loop: "{{ tenant_data.imdata }}"
+
+  # Output to screen
+  - name: Debug Tenant
+    debug:
+      msg: "{{ tenant_list }}"

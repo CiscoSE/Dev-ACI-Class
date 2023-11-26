@@ -1,0 +1,11 @@
+StudentSystem:
+  hosts:
+    simulator:
+      aci_host: apic-host-name-or-ip
+      aci_user_name: admin
+      ansible_password: '{{ lookup("env", "ANSIBLE_PASSWORD") }}'
+      pod: "1"
+      debug_switch: False
+
+
+  
