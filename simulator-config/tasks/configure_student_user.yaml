@@ -1,0 +1,45 @@
+---
+
+- name: Find Variable
+  set_fact:
+    user_password: "{{ users | selectattr('name','equalto', inventory_hostname | lower ) }}"
+  when: inventory_hostname != "Instructor"
+
+- name: Configure User on {{ inventory_hostname }}
+  cisco.aci.aci_rest:
+    host: "{{ apic_host }}"
+    username: "{{ apic_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    use_proxy: no
+    method: post
+    path: /api/mo/uni/userext/user-{{ inventory_hostname | lower }}.json
+    content: |
+      {
+        "aaaUser" : {
+          "attributes" : {
+            "pwd" : "{{ user_password[0].password }}",
+            "clearPwdHistory": "yes"
+          },
+          "children" : [{
+              "aaaUserDomain" : {
+                "attributes" : {
+                  "name" : "all" },
+                "children" : [{
+                    "aaaUserRole" : {
+                      "attributes" : { 
+                        "name" : "admin",
+                        "privType": "writePriv"}
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+  delegate_to: localhost  
+  when: inventory_hostname != "Instructor"
+  tags:
+    - always

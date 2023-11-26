@@ -1,0 +1,6 @@
+bgp:
+  asn: 68
+  # Generally, we only recommend two be assigned here. For small simulators, only one should be present
+  # Only spines can be route reflectors.
+  route_reflectors:
+    - rr_spine_id: 201

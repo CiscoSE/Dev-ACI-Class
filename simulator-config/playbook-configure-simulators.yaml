@@ -1,0 +1,40 @@
+---
+
+- name: Register a Switch
+  hosts: Students
+  gather_facts: no
+  vars_files:
+    - variables/switches.yaml
+    - variables/vpcs.yaml
+    - variables/bgp_route_reflectors.yaml
+    - variables/ntp.yaml
+    - variables/dns.yaml
+    - ../StudentEnvironment/variables/users.yaml
+  tasks:
+
+  - name: Register switches
+    include_tasks: ./tasks/register_switch.yaml
+    loop: "{{ switches | list }}"
+    tags: switches
+
+  - name: Create VPC
+    include_tasks: ./tasks/create_vpc.yaml
+    loop: "{{ vpc | list }}"
+    tags: VPCs
+  
+  - name: Assign BGP Route reflectors
+    include_tasks: ./tasks/configure_bgp_route_reflectors.yaml
+    tags: bgp_rr
+
+  - name: Configure NTP
+    include_tasks: ./tasks/configure_ntp.yaml
+    tags: ntp
+
+  - name: Configure DNS
+    include_tasks: ./tasks/configure_dns.yaml
+    tags: dns
+
+  - name: Create users
+    include_tasks: ./tasks/configure_student_user.yaml
+    tags:
+      - users

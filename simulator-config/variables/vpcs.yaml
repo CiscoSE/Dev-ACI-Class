@@ -1,0 +1,4 @@
+vpc:
+  - vpc_id: 1
+    switch_id1: 101
+    switch_id2: 102

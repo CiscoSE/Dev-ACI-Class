@@ -1,0 +1,42 @@
+---  
+
+- name: Debug Ouput
+  debug:
+    msg: "{{ item.name }}"
+  when: debug_switch == True
+  tags: always
+
+- name: Determing Switch Type
+  set_fact:
+    switch_role: "{% if item.role == 'leaf' %}2{% elif item.role == 'spine' %}3{% else %}''{% endif %}"
+  tags: always
+
+- name: Register a Switch
+  aci_rest:
+    host: "{{ apic_host }}"
+    username: "{{ apic_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    path: /api/node/mo/uni/controller/nodeidentpol.json
+    method: post
+    content: 
+      fabricNodeIdentP:
+        attributes:
+          # This DN should be present before the script is run, or this won't work.
+          dn: "uni/controller/nodeidentpol/nodep-{{ item.serial_number }}"
+          # Must match the discovered serial number
+          serial: "{{ item.serial_number }}"
+          # The node ID you want to assign, which is very difficult to change and is referenced by many other objects
+          nodeId: "{{ item.node_id }}"
+          # The name, which can be changed with few if any consiquences later. 
+          name: "{{ item.name }}"
+          status: "created,modified"
+        children: []
+
+  delegate_to: localhost
+  register: my_result
+
+- name: Pausing to ensure {{ item.name }} properly discovers
+  pause:
+   seconds: "{{ item.discovery_time_seconds }}"

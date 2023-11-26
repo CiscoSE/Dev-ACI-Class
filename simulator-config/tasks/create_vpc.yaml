@@ -1,0 +1,52 @@
+---  
+
+- name: Debug Ouput
+  debug:
+    msg: "{{ item }}"
+  when: debug_switch == True
+  tags: always
+
+- name: Create VPC {{ item.vpc_id }} with Switch {{ item.switch_id1 }} and {{ item.switch_id2 }}
+  aci_rest:
+    host: "{{ apic_host }}"
+    username: "{{ apic_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    path: /api/node/mo/uni/fabric/protpol.json
+    method: post
+    content:
+      fabricProtPol:
+        attributes:
+            dn: uni/fabric/protpol
+            name: default
+            pairT: explicit
+            userdom: all
+        children:
+        - fabricExplicitGEp:
+            attributes:
+                # This will be the VPC ID
+                id: "{{ item.vpc_id }}"
+                # This will be the Name of the VPC in the GUI
+                name: "{{ item.switch_id1 }}-{{ item.switch_id2 }}"
+                userdom: ":all:"
+            children:
+            - fabricRsVpcInstPol:
+                attributes:
+                    userdom: all
+            - fabricNodePEp:
+                attributes:
+                    # We select the first switch here
+                    id: "{{ item.switch_id1 }}"
+                    podId: "{{ pod }}"
+                    userdom: ":all:"
+            - fabricNodePEp:
+                attributes:
+                    # We select teh second switch here
+                    id: "{{ item.switch_id2 }}"
+                    podId: "{{ pod }}"
+                    userdom: ":all:"
+      
+  delegate_to: localhost
+  register: vpc_result
+  tags: always

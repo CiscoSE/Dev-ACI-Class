@@ -1,0 +1,46 @@
+---  
+
+- name: Assign Autonmous System Number(ASN)
+  cisco.aci.aci_rest:
+    host: "{{ apic_host }}"
+    username: "{{ apic_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    path: /api/node/mo/uni/fabric/bgpInstP-default.json
+    method: post
+    content:
+      bgpInstPol:
+        attributes:
+          dn: uni/fabric/bgpInstP-default
+          name: default
+          userdom: all
+        children:
+          - bgpAsP:
+              attributes:
+                asn: "{{ bgp.asn }}"
+                userdom: ":all:"
+  delegate_to: localhost
+  register: bgp_asn_result
+  tags: always
+
+- name: Assign Spine {{ item.rr_spine_id }} as Route Reflector
+  aci_rest:
+    host: "{{ apic_host }}"
+    username: "{{ apic_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    path: /api/node/mo/uni/fabric/bgpInstP-default/rr/node-{{ item.rr_spine_id }}.json
+    method: post
+    content:
+      bgpRRNodePEp:
+        attributes:
+          dn: uni/fabric/bgpInstP-default/rr/node-{{ item.rr_spine_id }}
+          id: "{{ item.rr_spine_id }}"
+          podId: '{{ pod }}'
+          userdom: ":all:"
+
+  loop: "{{ bgp.route_reflectors | list }}"
+  delegate_to: localhost
+  tags: always

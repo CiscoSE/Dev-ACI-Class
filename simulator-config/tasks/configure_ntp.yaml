@@ -1,0 +1,28 @@
+- name: Configure {{ item.source }} as time server
+  cisco.aci.aci_rest:
+    host: "{{ apic_host }}"
+    username: "{{ apic_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    path: /api/node/mo/uni/fabric/time-default/ntpprov-{{ item.source }}.json
+    method: post
+    content:
+      datetimeNtpProv:
+        attributes:
+          dn: "uni/fabric/time-default/ntpprov-{{ item.source }}"
+          keyId: '0'
+          maxPoll: "{{ ntp.max_poll }}"
+          minPoll: "{{ ntp.min_poll }}"
+          name: "{{ item.source }}"
+          preferred: "{{ item.preferred }}"
+          userdom: ":all:"
+        children:
+        - datetimeRsNtpProvToEpg:
+            attributes:
+              annotation: ''
+              tDn: "{{ ntp.mgmt_dn }}"
+              userdom: ":all:"
+  loop: "{{ ntp.sources }}"
+  delegate_to: localhost
+  tags: always

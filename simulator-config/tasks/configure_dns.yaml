@@ -1,0 +1,23 @@
+---
+
+- name: Configure DNS Servers
+  cisco.aci.aci_rest:
+    host: "{{ apic_host }}"
+    username: "{{ apic_user_name }}"
+    password: "{{ ansible_password }}"
+    validate_certs: no
+    use_ssl: yes
+    path: "/api/node/mo/uni/fabric/dnsp-default/prov-{{ dns_server }}.json"
+    method: post
+    content:
+      dnsProv:
+        attributes:
+          dn: "uni/fabric/dnsp-default/prov-[{{ dns_server  }}]"
+          addr: "{{ dns_server }}"
+  loop: "{{ dns_servers }}"
+  loop_control:
+    loop_var: dns_server
+  delegate_to: localhost
+  tags:
+    - dns
+
