@@ -4,13 +4,10 @@
   hosts: all
   connection: local
   gather_facts: no
-
-  vars_files:
-    - ./variables/tenant/tenant.yaml
   
   tasks:
 
-# Get the list of tenants
+  # Get the list of tenants
   - name: Get Tenants (Changes nothing)
     cisco.aci.aci_rest:
       host: "{{ aci_host }}"
